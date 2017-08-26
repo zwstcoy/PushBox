@@ -32,12 +32,12 @@ public class Monster implements Runnable{
 		monster4.setLayoutX(100);
 		monster4.setLayoutY(400);
 	}
-	public void isTouch(Rectangle r1, Rectangle r2){
-		
+	public boolean isTouch(Rectangle r1, Rectangle r2){
+		return r1.getBoundsInParent().intersects(r2.getBoundsInParent());
 	}
 	
 	
-	public void run() {
+	public  void run() {
 		int x=50;
 		int xSpeed=location.monsterSpeed;
 		int y=50;

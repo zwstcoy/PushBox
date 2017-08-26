@@ -31,21 +31,24 @@ public class GAMEMAIN extends Application{
 	public void start(Stage primaryStage) throws Exception {
 		endgamepane=new EndGameState();
 		gamepane1=new MeunState();
-		
+		statepane=new PlayState();
+		rulepane=new RuleState();
+
 		mediaPlayer = new MediaPlayer(res.media);
 		mediaPlayer.setVolume(1);
 		mediaPlayer.play();
-		scene1=new Scene(gamepane1,gamepane1.width,gamepane1.heigh);
 		
+		scene1=new Scene(gamepane1,gamepane1.width,gamepane1.heigh);
+		scene2=new Scene(statepane,statepane.width,statepane.heigh);
 		scene3=new Scene(endgamepane,endgamepane.width,endgamepane.heigh);
 		primaryStage.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
 			@Override
 			public void handle(MouseEvent event) {
 				System.out.println("click");
 				if(gamepane1.isClick||endgamepane.isStartOver){
-					rulepane=new RuleState();
+					gamepane1.isClick=false;
 					sceneRule=new Scene(rulepane,rulepane.width,rulepane.heigh);
-					
+
 					primaryStage.setScene(sceneRule);
 					primaryStage.show();
 					try {
@@ -54,8 +57,8 @@ public class GAMEMAIN extends Application{
 				     {
 				         System.out.println("warning...");
 				     }
-					statepane=new PlayState();
-					scene2=new Scene(statepane,statepane.width,statepane.heigh);
+					
+					statepane.init();
 					primaryStage.setScene(scene2);
 					primaryStage.show();
 				}

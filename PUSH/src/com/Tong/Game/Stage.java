@@ -8,7 +8,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
-public  class Stage implements Runnable{
+public  class Stage {
 	public ImageView image,image2,imageRule;
 	public Label scoreLabel;
 	public Label life,time;
@@ -99,7 +99,7 @@ public  class Stage implements Runnable{
 		rectPlayer.setLayoutY(y);
 		rectBox1.setLayoutX(x2);
 		rectBox1.setLayoutY(y2);
-		
+		updateTime();
 	}
 	
 	public boolean isTouch(Rectangle re1,Rectangle re2){
@@ -133,20 +133,9 @@ public  class Stage implements Runnable{
 		rectPlayer.setLayoutY(playerY);
 		scoreLabel.setText("Score: "+score);
 	}
-
-
-	@Override
-	public void run(){		
-		
-			try {
-				for(endTime=0;endTime<61;endTime++){
-					time.setText("Time: "+endTime);
-					Thread.sleep(1000);
-				}
-			} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
+	public void updateTime(){
+		endTime=(System.currentTimeMillis()/1000)-beginTime;
+		time.setText("Time: "+endTime);
+	}
 				
 }

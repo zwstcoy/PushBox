@@ -6,6 +6,8 @@ import com.Tong.FrameWork.Map2;
 import com.Tong.FrameWork.Monster;
 import com.Tong.Game.Stage;
 import com.Tong.Resource.Resources;
+
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
@@ -17,8 +19,8 @@ public class PlayState extends Pane {
 	Resources res=new Resources();
 	public int width=1000;
 	public int heigh=600;
-	Stage stage;
-	Monster monster,monster2;
+	Stage stage=new Stage();
+	Monster monster=new Monster(),monster2=new Monster();
 	InputHandler1 inputHandler1;
 	Button reStart,exit;
 	Map map=new Map1();
@@ -27,23 +29,23 @@ public class PlayState extends Pane {
 	public boolean isEndGame=false;
 	public boolean isStage2=false;
 
-	public PlayState(){
+	public void init(){
 		System.out.println("Playstage");
 		reStart=new Button(null,new ImageView(res.restart));		
 		reStart.setLayoutX(width-120);
 		reStart.setLayoutY(0);
 		reStart.setOnMouseClicked(e->{
 			stage.reset();
-		});
-		monster=new Monster();		
+		});	
 		monster.init();
-		
-		monster2=new Monster();
 		monster2.init();
+		tMonster1=new Thread(monster);
+		tMonster2=new Thread(monster2);
+		
 		inputHandler1=new InputHandler1();	
-		stage=new Stage();
+
 		stage.init();
-		Thread tStage=new Thread(stage);
+		
 		getChildren().addAll(stage.image,stage.rectBox1,
 				stage.rectPlayer,stage.winPlace,
 				stage.time,stage.life,stage.scoreLabel,stage.wallUp,
@@ -51,15 +53,43 @@ public class PlayState extends Pane {
 		getChildren().addAll(map.box1,map.box2,map.box3,map.box4,
 							 map.box5,map.box6);
 		addEventFilter(KeyEvent.KEY_PRESSED, new InputHandler1());
-		tMonster1=new Thread(monster);
-		tMonster2=new Thread(monster2);
-		//tStage.start();
-		tMonster1.start();
 		
-	}
-	public      
+		tMonster1.start();
 
-	class InputHandler1 implements EventHandler<KeyEvent>{
+
+		new Thread(new Runnable(){ 
+			public void run(){ 
+				while (true){
+					try {
+						Platform.runLater(new Runnable() {
+						public void run(){
+							stage.updateTime();
+							isEndGame=(stage.endTime>=60&&stage.score<5)||stage.liftNum==0?true:false;
+							if(monster.isTouch( monster.monster1,stage.rectPlayer)||monster2.isTouch(monster2.monster1, stage.rectPlayer)){
+								System.out.println("Touch Monster");
+								stage.life.setText("Life: "+--stage.liftNum);
+								stage.reset();
+							}
+							if(stage.score==1){
+								getChildren().add(monster2.monster1);
+								tMonster2.start();
+							}
+						} });
+					Thread.sleep(1000);
+				
+					} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+						e.printStackTrace();
+						}
+				}}}).start();
+		
+		
+		
+
+			
+	}
+		
+	public class InputHandler1 implements EventHandler<KeyEvent>{
 		
 		@SuppressWarnings("incomplete-switch")
 		public void handle(KeyEvent event) {
@@ -149,20 +179,9 @@ public class PlayState extends Pane {
 					}
 					break;
 				} 
-				/*if(true){
-					stage.liftNum--;
-					stage.life.setText("Life: "+stage.liftNum);
-				}*/
 				
 				stage.update(x, y,x2, y2);
 				stage.isWin();
-				if(stage.score==1){
-					
-					getChildren().add(monster2.monster1);
-					tMonster2.start();
-				}
-				
-				isEndGame=stage.endTime>=60&&stage.score<5?true:false;
 				
 				isStage2=stage.score==5?true:false;
 				
@@ -171,7 +190,7 @@ public class PlayState extends Pane {
 							stage.rectPlayer,stage.winPlace,
 							stage.time,stage.life,stage.scoreLabel,stage.wallUp,
 							stage.wallDown,stage.wallLeft,stage.wallRight,reStart,monster.monster1,map.box1,map.box2,map.box3,map.box4,
-							 map.box5,map.box6,reStart,monster.monster1);
+							 map.box5,map.box6,reStart);
 					
 					map=new Map2();
 					stage.init();

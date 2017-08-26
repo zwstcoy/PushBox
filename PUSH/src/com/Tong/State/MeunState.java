@@ -24,12 +24,10 @@ public class MeunState extends Pane{
 		getChildren().add(startButton);
 		inputhandler=new InputHandler();
 		startButton.setOnAction(inputhandler);
-	
-	
-		
-	}
-	class InputHandler implements EventHandler<ActionEvent> {
 
+	}
+	
+	class InputHandler implements EventHandler<ActionEvent> {
 		public void handle(ActionEvent event) {
 
 			System.out.println("in click");
